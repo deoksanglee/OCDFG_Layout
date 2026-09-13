@@ -2,6 +2,8 @@
 
 Layout algorithm and interactive viewer for **object-centric directly-follows graphs (OC-DFG)**.
 
+A project by **Deoksang Lee**, **Minseok Song** and **Wil M.P. van der Aalst**.
+
 An OCEL 2.0 log is split into one directly-follows graph per object type. Every activity gets a
 common rank (ILP), each object type is laid out on its own vertical axis, and the axes are merged
 one by one so that activities shared between object types line up. Filtering (by object type or
