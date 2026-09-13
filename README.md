@@ -1,6 +1,6 @@
 # OCDFG Layout
 
-Layout algorithm and interactive viewer for **object-centric directly-follows graphs (OC-DFG)**.
+A process mining tool: layout algorithm and interactive viewer for **object-centric directly-follows graphs (OC-DFG)** discovered from OCEL 2.0 event logs.
 
 A project by **Deoksang Lee**, **Minseok Song** and **Wil M.P. van der Aalst**.
 
