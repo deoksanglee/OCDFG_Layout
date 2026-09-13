@@ -52,32 +52,6 @@ Then open http://localhost:3000:
    edge-frequency slider, then *Apply* to filter. Click an edge for its source, target and
    frequency. Zoom with the slider or Ctrl + mouse wheel; *Reset* fits the whole drawing again.
 
-## How the layout is computed
-
-`MultiObjectGraph.generate_layout_from_log` (see `backend/ocdfg_layout/MultiObjectGraph.py`):
-
-1. **Log → graphs**: case variants become nodes/edges per object type; every type gets a
-   `<type> start` / `<type> end` node.
-2. **Rank assignment**: one ILP (Gurobi) assigns a rank to every activity, minimising weighted
-   precedence violations and edge length, with every node between the start and end node of
-   each of its object types.
-3. **Per-type layout** (`process_layout/Graph.py`): the most frequent variant becomes the
-   backbone (order 0), the remaining components are balanced left/right, long edges get virtual
-   bend nodes, and a weighted-median sweep reduces crossings.
-4. **Axis merging**: starting from the type that shares the most activities, the most similar
-   remaining type is added at the axis position with the lowest cost
-   `λ1 · crossing_cost + λ2 · axis_distance_cost` (`LAMBDA_EDGE_CROSS`, `LAMBDA_AXIS_DIST`).
-5. **Global crossing reduction**: after an adjacent-axis-swap pass, non-backbone nodes are
-   re-ordered within their own axis and rank (median sweeps, single-node moves into free slots
-   on either side of the backbone, whole-chain moves for long edges); the axis order and the
-   backbone columns stay fixed. A->B / B->A pairs are laid out as one double-headed edge and
-   counted as two edges.
-6. **Placement**: x positions by a median heuristic without overlaps, long edges straightened
-   (`EDGE_STRAIGHTENING` in `conf.py`), layout centred, SVG coordinates and edge polylines.
-
-Filtering (`recompute_filtered`) keeps the ranks, axis order and node order from the cached
-layout and repeats only step 6, returning the same output plus `movement` statistics.
-
 ## Backend
 
 Uploaded logs are stored in `backend/data/<name>/`; seven preprocessed sample logs
@@ -102,21 +76,6 @@ locations with `OCDFG_DATA_DIR` and `OCDFG_PICKLE_DIR`.
 `output` contains `nodes` (with `nodes_visualized`: one sub-circle per object type), `edges`
 (polyline `data` per original edge), `object_axis_order`, `edge_crosses`, `maxFreq`/`minFreq`,
 `radius` and, for filters, `movement`.
-
-### Using the package directly
-
-```python
-import json
-from ocdfg_layout import MultiObjectGraph
-from ocdfg_layout.preprocess import ocel_to_layout_log
-
-with open("log.json", encoding="utf-8") as f:
-    ocel = json.load(f)
-
-_, log = ocel_to_layout_log(ocel)          # OCEL 2.0 -> case variants per object type
-output, mog = MultiObjectGraph.generate_layout_from_log(log)
-filtered = mog.recompute_filtered(object_types=["Order", "Item"], filter_value=50)
-```
 
 ### Tuning
 
@@ -143,7 +102,8 @@ static build in `frontend/build/`.
 backend/
   main.py                 FastAPI app
   ocdfg_layout/
-    MultiObjectGraph.py   the OC-DFG layout (steps 1–6 above) and filtering
+    MultiObjectGraph.py   the OC-DFG layout (rank assignment, per-type layout, axis merging,
+                          crossing reduction, placement) and filtering
     ObjectGraph.py        laid-out graph of one object type (ObjectNode / ObjectEdge)
     preprocess.py         OCEL 2.0 JSON -> case variants per object type
     conf.py               drawing constants
