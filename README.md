@@ -78,10 +78,11 @@ layout and repeats only step 6, returning the same output plus `movement` statis
 
 ## Backend
 
-Uploaded logs are stored in `backend/data/<name>/` and computed layouts are cached as pickles in
-`backend/pickles/` (both git-ignored). The pickle is what the filter endpoints reload, so a
-filter never recomputes the ranks. Override the locations with `OCDFG_DATA_DIR` and
-`OCDFG_PICKLE_DIR`.
+Uploaded logs are stored in `backend/data/<name>/`; seven preprocessed sample logs
+(blockchain, hinge, hiring, hospital, logistics, o2c, p2p) are included, so the app works right
+after start-up. Computed layouts are cached as pickles in `backend/pickles/` (git-ignored) –
+the filter endpoints reload that pickle, so a filter never recomputes the ranks. Override the
+locations with `OCDFG_DATA_DIR` and `OCDFG_PICKLE_DIR`.
 
 ### API
 
