@@ -1,4 +1,5 @@
 # OCDFG Layout
+[![DOI](https://zenodo.org/badge/1368245355.svg)](https://doi.org/10.5281/zenodo.22739339)
 
 A process mining tool: layout algorithm and interactive viewer for **object-centric directly-follows graphs (OC-DFG)** discovered from OCEL 2.0 event logs.
 
